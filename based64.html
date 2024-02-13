@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Based 64😎</title>
+		<meta name="description" content="Uses a very sophisticated proprietary encryption technique based on base64."/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="https://fonts.googleapis.com/css2?family=DM+Sans&display=swap" rel="stylesheet">
+		<style>
+			html,
+			body {
+				height: 100%;
+			}
+			body {
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				font-family: 'DM Sans', sans-serif;
+			}
+			.main {
+				display: flex;
+				flex: auto;
+			}
+			.panel {
+				display: flex;
+				flex-direction: column;
+				flex: auto;
+			}
+			.label {
+				font-size: 16px;
+				padding: 10px;
+				color: white;
+			}
+			.to-encrypt .label {
+				background-color: #4CAF50;
+			}
+			.textarea {
+				flex: auto;
+				resize: none;
+				padding: 20px;
+				-webkit-appearance: none;
+				border: none;
+				background: none;
+				font: inherit;
+				color: inherit;
+				box-sizing: border-box;
+				width: 100%;
+			}
+			.line {
+				width: 1px;
+				background-color: rgba(0, 0, 0, 0.1);
+			}
+			.help {
+				padding: 20px;
+				margin: 0;
+				background-color: rgba(0, 0, 0, 0.8);
+				color: white;
+				padding-right: 70px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="main">
+			<div class="panel to-encrypt">
+				<label class="label" for="to-encrypt">To encrypt:</label>
+				<textarea class="textarea" id="to-encrypt" placeholder="Text to be encrypted here" disabled></textarea>
+			</div>
+			<span class="line"></span>
+		</div>
+<script type="module">
+const toEncrypt = document.getElementById('to-encrypt')
+
+async function main () {
+	const raw = await fetch('./base64-base.txt').then(r => r.text());
+	const data = {};
+	const reverse = {};
+	let longest = 0;
+
+	for (const [char, ...sequence] of raw.split(/\r?\n/).filter(value => value)) {
+		data[char] = sequence;
+		reverse[sequence.join('')] = char;
+		if (sequence.length > longest) longest = sequence.length;
+	}
+
+	function encrypt (text) {
+		const stream = [...Array.from(text, char => char.charCodeAt().toString(2).padStart(8, '0')).join('')];
+		let out = '';
+
+		while (stream.length) {
+
+			let length = Math.min(longest, stream.length);
+			let found;
+
+			while (!found && length > 0) {
+				found = reverse[stream.slice(0, length).join('')];
+				length--;
+			}
+
+			if (!found) throw new Error('what');
+
+			out += Math.random() < 0.5 ? found.toLowerCase() : found.toUpperCase();
+
+			stream.splice(0, length + 1);
+		}
+
+		for (let i = Math.random(Math.random() * 3); i >= 0; i--) {
+			out += '=';
+		}
+
+		return out;
+	};
+
+	toEncrypt.addEventListener('input', e => {
+		toDecrypt.value = encrypt(toEncrypt.value);
+	});
+
+	toEncrypt.disabled = false;
+}
+main();
+</script>
+	</body>
+</html>
