@@ -65,14 +65,15 @@
 				<label class="label" for="to-encrypt">To encrypt:</label>
 				<textarea class="textarea" id="to-encrypt" placeholder="Text to be encrypted here" disabled></textarea>
 			</div>
-			<div class="panel to-decrypt">
-				<label class="label" for="to-decrypt">Output:</label>
-				<textarea class="textarea" id="to-decrypt" placeholder="Text to be outputted here" disabled></textarea>
+			<div class="panel to-encrypt">
+				<label class="label" for="output">Output:</label>
+				<textarea class="textarea" id="output" placeholder="Text to be outputted here" disabled></textarea>
 			</div>
 			<span class="line"></span>
 		</div>
 <script type="module">
-const toEncrypt = document.getElementById('to-encrypt')
+const toEncrypt = document.getElementById('to-encrypt');
+const output = document.getElementById('output')
 
 async function main () {
 	const raw = await fetch('./base64-base.txt').then(r => r.text());
@@ -115,7 +116,7 @@ async function main () {
 	};
 
 	toEncrypt.addEventListener('input', e => {
-		toDecrypt.value = encrypt(toEncrypt.value);
+		output.value = encrypt(toEncrypt.value);
 	});
 
 	toEncrypt.disabled = false;
